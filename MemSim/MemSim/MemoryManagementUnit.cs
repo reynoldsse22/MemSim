@@ -7,22 +7,25 @@ namespace MemSim
     internal class MemoryManagementUnit
     {
         public static Configurations config;
-        public static int VIRTpageNumber = 0;
-        public static int TLBtag = 0;
-        public static int TLBindex = 0;
-        public static int PTindex = 0;
-        public static int pageOffset = 0;
-        public static int DCtag = 0;
-        public static int DCindex = 0;
-        public static int DCoffset = 0;
-        public static int L2tag = 0;
-        public static int L2Index = 0;
-        public static int L2Offset = 0;
+        public static int VIRTpageNumber;
+        public static int TLBtag;
+        public static int TLBindex;
+        public static int PTindex;
+        public static int pageOffset;
+        public static int DCtag;
+        public static int DCindex;
+        public static int DCoffset;
+        public static int L2tag;
+        public static int L2Index;
+        public static int L2Offset;
         public static int TLBhit, TLBmiss, PThit, PTmiss, DChit, DCmiss, L2hit, L2miss,
             reads, writes, MMrefs, DiskRefs, PTrefs, MemRefLength;
         public static int IndexBits;
         public void RunProgram(ref Configurations configuration, ref string inputString, ref string statsOutput, ref string memOutput)
         {
+            resetVariables();
+            statsOutput = string.Empty;
+            memOutput= string.Empty;
             config = configuration;
             //Will hold the addresses from the inputted files
             string[] addressLines;
@@ -53,15 +56,26 @@ namespace MemSim
             address = addressLines[0].Split(':');       // calculate the bits in a memory reference
             MemRefLength = address[1].Length * 4;
 
-            memOutput += "Virtual  Virt.  Page TLB    TLB TLB  PT   Phys        DC  DC          L2  L2\n";
-            memOutput += "Address  Page # Off  Tag    Ind Res. Res. Pg # DC Tag Ind Res. L2 Tag Ind Res.\n";
-            memOutput += "-------- ------ ---- ------ --- ---- ---- ---- ------ --- ---- ------ --- ----\n";
+            memOutput += "Virtual  Virt.  Page ";
+            if (config.TLB_Exists) { memOutput += "  TLB    TLB TLB"; }
+            memOutput += "PT   Phys        DC  DC  ";
+            if (config.L2Cache_Exists) { memOutput += "        L2  L2\n"; } else { memOutput += "\n"; }
+            memOutput += "Address  Page # Off ";
+            if (config.TLB_Exists) { memOutput += " Tag    Ind Res."; }
+            memOutput += " Res. Pg # DC Tag Ind Res.";
+            if (config.L2Cache_Exists) { memOutput += " L2 Tag Ind Res.\n"; } else { memOutput += "\n"; }
+            memOutput += "-------- ------ ----";
+            if (config.TLB_Exists) { memOutput += " ------ --- ----"; }
+            memOutput += " ---- ---- ------ --- ----";
+            if (config.L2Cache_Exists) { memOutput += " ------ --- ----\n"; } else { memOutput += "\n"; }
 
             //runs through each address and sends it through TLB, Page Table, and Cache
             for (int x = 0; x < addressLines.Length; x++)
             {
                 //Resets L2 Variables
-                l2Cache = CacheHit.BYPASS;
+                if(config.L2Cache_Exists)
+                    l2Cache = CacheHit.BYPASS;
+
                 address = addressLines[x].Split(':');
                 PTresult = "";
 
@@ -146,12 +160,14 @@ namespace MemSim
                         case CacheHit.CONF:
                             DCmiss++;
                             //DC WRITE CONF Write-Back, Update L2 Cache with the address that is being overwritten
-                            l2Cache = l2.updateReadCache(virtAddress);
+                            if (config.L2Cache_Exists)
+                                l2Cache = l2.updateReadCache(virtAddress);
                             break;
                         case CacheHit.MISS:
                             DCmiss++;
                             //DC READ CONF/MISS, Pass address to the L2 cache to see if it hits or misses
-                            l2Cache = l2.updateReadCache(virtAddress);
+                            if (config.L2Cache_Exists)
+                                l2Cache = l2.updateReadCache(virtAddress);
                             break;
 
                     }
@@ -160,7 +176,8 @@ namespace MemSim
                     DCtag = dc.tag;
 
                     //Updates variables for the console
-                    L2result = l2MemoryReference(l2, l2Cache);
+                    if (config.L2Cache_Exists)
+                        L2result = l2MemoryReference(l2, l2Cache);
                 }
                 else
                 {
@@ -178,7 +195,8 @@ namespace MemSim
                             else
                             {
                                 //DC WRITE HIT/CONF Write-Through, Update DC and L2 Cache
-                                l2Cache = l2.updateWriteCache(virtAddress);
+                                if (config.L2Cache_Exists)
+                                    l2Cache = l2.updateWriteCache(virtAddress);
                             }
 
                             break;
@@ -189,22 +207,28 @@ namespace MemSim
                             {
                                 if (dc.dirtyBits[dc.lastIndex])
                                 {
-                                    l2Cache = l2.updateWriteCache(dc.lastAddress);
+                                    if (config.L2Cache_Exists)
+                                        l2Cache = l2.updateWriteCache(dc.lastAddress);
                                     dc.dirtyBits[dc.lastIndex] = false;
                                 }
                                 else
                                 {
-                                    l2Cache = l2.updateWriteCache(virtAddress);
+                                    if (config.L2Cache_Exists)
+                                        l2Cache = l2.updateWriteCache(virtAddress);
                                 }
 
                             }
                             else
-                                l2Cache = l2.updateWriteCache(virtAddress);
+                            {
+                                if (config.L2Cache_Exists)
+                                    l2Cache = l2.updateWriteCache(virtAddress);
+                            }
                             break;
                         case CacheHit.MISS:
                             DCmiss++;
                             //DC MISS Write-Back, Update DC and L2 Cache
-                            l2Cache = l2.updateWriteCache(virtAddress);
+                            if (config.L2Cache_Exists)
+                                l2Cache = l2.updateWriteCache(virtAddress);
                             break;
 
                     }
@@ -213,15 +237,19 @@ namespace MemSim
                     DCtag = dc.tag;
 
                     //Gets the variables to print out to the console
-                    L2result = l2MemoryReference(l2, l2Cache);
+                    if(config.L2Cache_Exists)
+                        L2result = l2MemoryReference(l2, l2Cache);
                 }
 
-                string output = String.Format("{0,8} {1,6} {2,4} {3,6} {4,3} {5,4} {6,4} {7,4} {8,6} {9,3} {10,4} {11,6} {12,3} {13,4}\n",
-                    address[1].PadLeft(8, '0'), VIRTpageNumber.ToString("X").PadLeft(6), pageOffset.ToString("X").PadLeft(4),
-                    TLBtag, TLBindex, TLBresult, PTresult, physicalPageNum, DCtag.ToString("X"), DCindex,
-                    DCresult, L2tag, L2Index, L2result);
-                memOutput += output;
 
+                //Create output
+
+
+                string output = String.Format("{0,8} {1,6} {2,4} ", address[1].PadLeft(8, '0'), VIRTpageNumber.ToString("X").PadLeft(6), pageOffset.ToString("X").PadLeft(4));
+                if (config.TLB_Exists) { output += String.Format("{0,6} {1,3} {2,4} ", TLBtag, TLBindex, TLBresult); }
+                output += String.Format("{0,4} {1,4} {2,6} {3,3} {4,4} ", PTresult, physicalPageNum, DCtag.ToString("X"), DCindex,DCresult);
+                if (config.L2Cache_Exists) { output += String.Format("{0,6} {1,3} {2,4}\n", L2tag, L2Index, L2result); } else { output += "\n"; }
+                memOutput += output;
             }
 
             if(config.TLB_Exists)
@@ -420,6 +448,34 @@ namespace MemSim
             return memRef.ToString("X");
         }
 
-
+        internal void resetVariables()
+        {
+            VIRTpageNumber = 0;
+            TLBtag = 0;
+            TLBindex = 0;
+            PTindex = 0;
+            pageOffset = 0;
+            DCtag = 0;
+            DCindex = 0;
+            DCoffset = 0;
+            L2tag = 0;
+            L2Index = 0;
+            L2Offset = 0;
+            TLBhit = 0;
+            TLBmiss = 0;
+            PThit = 0;
+            PTmiss = 0;
+            DChit = 0;
+            DCmiss = 0;
+            L2hit = 0;
+            L2miss = 0;
+            reads = 0;
+            writes = 0;
+            MMrefs = 0;
+            DiskRefs = 0;
+            PTrefs = 0;
+            MemRefLength = 0;
+            IndexBits = 0;
+        }
     }
 }

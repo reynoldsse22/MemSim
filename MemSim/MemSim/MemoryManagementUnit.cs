@@ -21,7 +21,7 @@ namespace MemSim
         public static int TLBhit, TLBmiss, PThit, PTmiss, DChit, DCmiss, L2hit, L2miss,
             reads, writes, MMrefs, DiskRefs, PTrefs, MemRefLength;
         public static int IndexBits;
-        public void RunProgram(Configurations configuration, ref string inputString, ref string statsOutput, ref string memOutput)
+        public void RunProgram(ref Configurations configuration, ref string inputString, ref string statsOutput, ref string memOutput)
         {
             config = configuration;
             //Will hold the addresses from the inputted files
@@ -47,7 +47,6 @@ namespace MemSim
             int physAddress = 0;
             int physicalPageNum = 0;
             string TLBresult = "MISS", PTresult, DCresult = "MISS", L2result = "MISS";
-            updateConfigSettings();
             addressLines = inputString.Split('\n');
             //statsOutput += DisplayConfigSettings();
 
@@ -75,27 +74,29 @@ namespace MemSim
 
                 //TLB checks to see if the physical address exists
                 //if statement here to see if tlb is disabled or not
-                Dtlb = tlb.updateTLB(VIRTpageNumber);
-
-                switch (Dtlb)
+                if(config.TLB_Exists)
                 {
-                    case TlbHit.HIT:
-                        TLBhit++;
-                        physicalPageNum = tlb.returnPPN();
-                        //TLB HIT, Skip PageTable
-                        goto Skip;
+                    Dtlb = tlb.updateTLB(VIRTpageNumber);
 
-                    case TlbHit.CONF:
-                        TLBmiss++;
-                        //TLB MISS, Access PageTable
-                        break;
+                    switch (Dtlb)
+                    {
+                        case TlbHit.HIT:
+                            TLBhit++;
+                            physicalPageNum = tlb.returnPPN();
+                            //TLB HIT, Skip PageTable
+                            goto Skip;
 
-                    case TlbHit.MISS:
-                        TLBmiss++;
-                        //TLB MISS, Access PageTable
-                        break;
+                        case TlbHit.CONF:
+                            TLBmiss++;
+                            //TLB MISS, Access PageTable
+                            break;
+
+                        case TlbHit.MISS:
+                            TLBmiss++;
+                            //TLB MISS, Access PageTable
+                            break;
+                    }
                 }
-
 
                 //PageTable finds the physical address for the virtual address
 
@@ -113,15 +114,20 @@ namespace MemSim
                     PTresult = "MISS";
                     physicalPageNum = pt.GetPFN(VIRTpageNumber);
                 }
-                tlb.updateTlbTag(physicalPageNum);
+                if(config.TLB_Exists)
+                    tlb.updateTlbTag(physicalPageNum);
             Skip:
                 // build new virt address with PFN + offset
                 virtAddress = (physicalPageNum << IndexBits) + pageOffset;
 
-                //TLB Update regardless
-                TLBresult = Dtlb.ToString();
-                TLBindex = tlb.index;
-                TLBtag = tlb.tag;
+                //TLB Update if it exists
+                if(config.TLB_Exists)
+                {  
+                    TLBresult = Dtlb.ToString();
+                    TLBindex = tlb.index;
+                    TLBtag = tlb.tag;
+                }
+                
 
                 // REPLACED CARLOS' physAddress WITH virtAddress
                 // need to differentiate with the two based on config settings
@@ -218,9 +224,11 @@ namespace MemSim
 
             }
 
-
-            tlb.findTLBVariables(12);
-            TlbHit t = tlb.findInTlb();
+            if(config.TLB_Exists)
+            {
+                tlb.findTLBVariables(12);
+                TlbHit t = tlb.findInTlb();
+            }
 
             statsOutput += DisplayFinalStats();
 
@@ -338,49 +346,6 @@ namespace MemSim
             output += "\nDisk Refs: " + DiskRefs;
             return output;
         }
-        public static void updateConfigSettings()
-        {
-
-        }
-
-        /*
-        public static void checkConfig()
-        {
-            // The DTLB may range from direct mapped to fully associative(and any set associative in-between)
-            // The DTLB has a maximum of 64 entries
-
-            // The L1 DC is direct mapped or set associative—with a maximum set associativity of 8
-            // The L1 DC has a maximum of 128 entries
-            // The L1 DC has a minimum line size of 8 bytes
-            // Will probably apply to L2 as well
-
-            ConfigurationManager.AppSettings.Get("DC Number of sets");
-            ConfigurationManager.AppSettings.Get("DC Number of sets");
-            ConfigurationManager.AppSettings.Get("DC Set size");
-            ConfigurationManager.AppSettings.Get("DC Line size");
-
-            ConfigurationManager.AppSettings.Get("DC Index Bits");
-            ConfigurationManager.AppSettings.Get("DC Offset Bits");
-
-            ConfigurationManager.AppSettings.Get("L2 Number of sets");
-            ConfigurationManager.AppSettings.Get("L2 Set size");
-            ConfigurationManager.AppSettings.Get("L2 Line size");
-
-            ConfigurationManager.AppSettings.Get("L2 Index Bits");
-            ConfigurationManager.AppSettings.Get("L2 Offset Bits");
-
-            // The maximum number of virtual pages is 8192
-            // The maximum number of physical pages is 2048
-            // A page has a maximum size of 4 KiB = 4096 Bytes
-            ConfigurationManager.AppSettings.Get("PT Number of virtual pages");
-            ConfigurationManager.AppSettings.Get("PT Number of physical pages");
-            ConfigurationManager.AppSettings.Get("PT Page Size");
-
-
-            // The number of sets, line size, and entries in the caches, the number of virtual pages, and the number of
-            // physical pages must be a power of 2
-        }
-        */
 
         /// <summary>Sets VPN value based on config settings and given memory reference</summary>
         public static void IsolateVPNAndOffset(string MemoryReference)

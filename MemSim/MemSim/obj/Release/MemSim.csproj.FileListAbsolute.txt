@@ -1,0 +1,11 @@
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\bin\Release\MemSim.exe.config
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\bin\Release\MemSim.exe
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\bin\Release\MemSim.pdb
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.csproj.AssemblyReference.cache
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.csproj.SuggestedBindingRedirects.cache
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.MemSimForm.resources
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.Properties.Resources.resources
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.csproj.GenerateResource.cache
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.csproj.CoreCompileInputs.cache
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.exe
+C:\Users\samre\Documents\GitHub\MemSim\MemSim\obj\Release\MemSim.pdb

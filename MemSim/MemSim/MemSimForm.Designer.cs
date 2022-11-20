@@ -37,6 +37,8 @@
             this.MemRefLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.outputTabs = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.StatsTextBox = new System.Windows.Forms.RichTextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.runButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -69,8 +71,6 @@
             this.DC_NumOfSetsBox = new System.Windows.Forms.ComboBox();
             this.TLB_NumOfSetsBox = new System.Windows.Forms.ComboBox();
             this.L2_NumOfSetsBox = new System.Windows.Forms.ComboBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.StatsTextBox = new System.Windows.Forms.RichTextBox();
             outputBox = new System.Windows.Forms.TabPage();
             outputBox.SuspendLayout();
             this.outputTabs.SuspendLayout();
@@ -92,7 +92,7 @@
             // 
             this.outputTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.outputTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.outputTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.outputTextBox.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.outputTextBox.Location = new System.Drawing.Point(3, 7);
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
@@ -158,6 +158,28 @@
             this.outputTabs.SelectedIndex = 0;
             this.outputTabs.Size = new System.Drawing.Size(863, 350);
             this.outputTabs.TabIndex = 156;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.StatsTextBox);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(855, 324);
+            this.tabPage1.TabIndex = 2;
+            this.tabPage1.Text = "Statistics";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // StatsTextBox
+            // 
+            this.StatsTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.StatsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.StatsTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.StatsTextBox.Location = new System.Drawing.Point(3, 5);
+            this.StatsTextBox.Name = "StatsTextBox";
+            this.StatsTextBox.ReadOnly = true;
+            this.StatsTextBox.Size = new System.Drawing.Size(849, 314);
+            this.StatsTextBox.TabIndex = 1;
+            this.StatsTextBox.Text = "";
             // 
             // runButton
             // 
@@ -626,28 +648,6 @@
             this.L2_NumOfSetsBox.TabIndex = 193;
             this.L2_NumOfSetsBox.Text = "16";
             this.L2_NumOfSetsBox.SelectedIndexChanged += new System.EventHandler(this.catchValueChange);
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.StatsTextBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(855, 324);
-            this.tabPage1.TabIndex = 2;
-            this.tabPage1.Text = "Statistics";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // StatsTextBox
-            // 
-            this.StatsTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.StatsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.StatsTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StatsTextBox.Location = new System.Drawing.Point(3, 5);
-            this.StatsTextBox.Name = "StatsTextBox";
-            this.StatsTextBox.ReadOnly = true;
-            this.StatsTextBox.Size = new System.Drawing.Size(849, 314);
-            this.StatsTextBox.TabIndex = 1;
-            this.StatsTextBox.Text = "";
             // 
             // MemSimForm
             // 

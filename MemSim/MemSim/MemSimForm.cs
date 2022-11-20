@@ -60,7 +60,7 @@ namespace MemSim
             if(InputTextBox.Text != "" && InputTextBox.Text != null)
             {
                 string inputString = InputTextBox.Text;
-                MMU.RunProgram(config, ref inputString, ref statsString, ref outputString);
+                MMU.RunProgram(ref config, ref inputString, ref statsString, ref outputString);
             }
             updateGUI();
         }
@@ -88,7 +88,7 @@ namespace MemSim
                 TLB_Checkbox.Enabled = true;
             }
             if (!TLB_Checkbox.Checked || !VirtAddressingCheckBox.Checked)
-            {
+            { 
                 TLB_NumOfSetsBox.Enabled = false;
                 TLB_SetSizeBox.Enabled = false;
             }

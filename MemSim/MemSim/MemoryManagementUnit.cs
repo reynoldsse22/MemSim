@@ -57,7 +57,7 @@ namespace MemSim
             MemRefLength = address[1].Length * 4;
 
             memOutput += "Virtual  Virt.  Page ";
-            if (config.TLB_Exists) { memOutput += "  TLB    TLB TLB"; }
+            if (config.TLB_Exists) { memOutput += "TLB    TLB TLB  "; }
             memOutput += "PT   Phys        DC  DC  ";
             if (config.L2Cache_Exists) { memOutput += "        L2  L2\n"; } else { memOutput += "\n"; }
             memOutput += "Address  Page # Off ";
@@ -351,23 +351,23 @@ namespace MemSim
             string output = "Simulation Statistics:";
             output+= "\nDTLB Hits: " + TLBhit;
             output += "\nDTLB Misses: " + TLBmiss;
-            output += "\nDTLB Hit Ratio: " + (double)TLBhit / (TLBmiss + TLBhit);
+            output += "\nDTLB Hit Ratio: " + ((double)TLBhit / (TLBmiss + TLBhit)).ToString(".000");
 
             output += "\n\nPT Hits: " + PThit;
             output += "\nPT Faults: " + PTmiss;
-            output += "\nPT Hit Ratio: " + (double)PThit / (PTmiss + PThit);
+            output += "\nPT Hit Ratio: " + ((double)PThit / (PTmiss + PThit)).ToString(".000");
 
             output += "\n\nDC Hits: " + DChit;
             output += "\nDC Misses: " + DCmiss;
-            output += "\nDC Hit Ratio: " + (double)DChit / (DCmiss + DChit);
+            output += "\nDC Hit Ratio: " + ((double)DChit / (DCmiss + DChit)).ToString(".000");
 
             output += "\n\nL2 Hits: " + L2hit;
             output += "\nL2 Misses: " + L2miss;
-            output += "\nL2 Hit ratio: " + (double)L2hit / (L2miss + L2hit);
+            output += "\nL2 Hit ratio: " + ((double)L2hit / (L2miss + L2hit)).ToString(".000");
 
             output += "\n\nTotal Reads: " + reads;
             output += "\nTotal Writes: " + writes;
-            output += "\nRatio of Reads: " + (double)reads / (writes + reads);
+            output += "\nRatio of Reads: " + ((double)reads / (writes + reads)).ToString(".000");
 
             output += "\n\nMain Memory Refs: " + MMrefs;
             output += "\nPage Table Refs: " + PTrefs;

@@ -17,6 +17,12 @@ namespace MemSim
         public bool VirtAddressing, TLB_Exists, L2Cache_Exists;
         public Configurations()
         {
+            setToDefault();
+            computeIndexandOffsets();
+        }
+
+        public void setToDefault()
+        {
             TLB_NumOfSets = 2;
             TLB_SetSize = 1;
 
@@ -37,7 +43,6 @@ namespace MemSim
             VirtAddressing = true;
             TLB_Exists = true;
             L2Cache_Exists = true;
-            computeIndexandOffsets();
         }
 
         public void updateConfiguration()

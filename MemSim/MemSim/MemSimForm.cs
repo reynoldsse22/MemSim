@@ -38,7 +38,8 @@ namespace MemSim
 
         private void resetConfigToDefault()
         {
-            config = new Configurations();
+            VirtAddressingCheckBox.Checked = true;
+            config.setToDefault();
             updateConfigGUI();
         }
 
@@ -78,14 +79,40 @@ namespace MemSim
 
         public void updateConfigGUI()
         {
-            if (!VirtAddressingCheckBox.Checked)
+            PT_VPBox.SelectedIndex = config.PT_NumOfVP == 1 ? 0 : (int)Math.Log(config.PT_NumOfVP, 2);
+            PT_PPBox.SelectedIndex = config.PT_NumOfPhyP == 1 ? 0 : (int)Math.Log(config.PT_NumOfPhyP, 2);
+            PT_PageSizeBox.SelectedIndex = config.PT_PageSize == 1 ? 0 : (int)Math.Log(config.PT_PageSize, 2);
+
+            DC_NumOfSetsBox.SelectedIndex = config.DC_NumOfSets == 1 ? 0 : (int)Math.Log(config.DC_NumOfSets, 2);
+            DC_SetSizeBox.SelectedIndex = config.DC_SetSize == 1 ? 0 : (int)Math.Log(config.DC_SetSize, 2);
+            DC_LineSizeBox.SelectedIndex = config.DC_LineSize == 1 ? 0 : (int)Math.Log(config.DC_LineSize, 2);
+            DC_WriteThroughCheckBox.Checked = config.DC_Writethrough_NoAllocate;
+
+            L2CacheCheckBox.Checked = config.L2Cache_Exists;
+            L2_NumOfSetsBox.SelectedIndex = config.L2_NumOfSets == 1 ? 0 : (int)Math.Log(config.L2_NumOfSets, 2);
+            L2_SetSizeBox.SelectedIndex = config.L2_SetSize == 1 ? 0 : (int)Math.Log(config.L2_SetSize, 2);
+            L2_LineSizeBox.SelectedIndex = config.L2_LineSize == 1 ? 0 : (int)Math.Log(config.L2_LineSize, 2);
+            L2_WriteThroughCheckBox.Checked = config.L2_Writethrough_NoAllocate;
+
+            TLB_Checkbox.Checked = VirtAddressingCheckBox.Checked && config.TLB_Exists;
+            TLB_NumOfSetsBox.SelectedIndex = config.TLB_NumOfSets == 1 ? 0 : (int)Math.Log(config.TLB_NumOfSets, 2);
+            TLB_SetSizeBox.SelectedIndex = config.TLB_SetSize == 1 ? 0 : (int)Math.Log(config.TLB_SetSize, 2);
+
+            VirtAddressingCheckBox.Checked = config.VirtAddressing;
+
+           if (!VirtAddressingCheckBox.Checked)
             {
-                TLB_Checkbox.Checked = false;
                 TLB_Checkbox.Enabled = false;
+                PT_PageSizeBox.Enabled = false;
+                PT_PPBox.Enabled = false;
+                PT_VPBox.Enabled = false;
             }
             else
             {
                 TLB_Checkbox.Enabled = true;
+                PT_PageSizeBox.Enabled = true;
+                PT_PPBox.Enabled = true;
+                PT_VPBox.Enabled = true;
             }
             if (!TLB_Checkbox.Checked || !VirtAddressingCheckBox.Checked)
             { 
@@ -111,27 +138,6 @@ namespace MemSim
                 L2_LineSizeBox.Enabled = true;
                 L2_WriteThroughCheckBox.Enabled = true;
             }
-            
-            PT_VPBox.SelectedIndex = config.PT_NumOfVP == 1 ? 0 : (int)Math.Log(config.PT_NumOfVP, 2);
-            PT_PPBox.SelectedIndex = config.PT_NumOfPhyP == 1 ? 0 : (int)Math.Log(config.PT_NumOfPhyP, 2);
-            PT_PageSizeBox.SelectedIndex = config.PT_PageSize == 1 ? 0 : (int)Math.Log(config.PT_PageSize, 2);
-
-            DC_NumOfSetsBox.SelectedIndex = config.DC_NumOfSets == 1 ? 0 : (int)Math.Log(config.DC_NumOfSets, 2);
-            DC_SetSizeBox.SelectedIndex = config.DC_SetSize == 1 ? 0 : (int)Math.Log(config.DC_SetSize, 2);
-            DC_LineSizeBox.SelectedIndex = config.DC_LineSize == 1 ? 0 : (int)Math.Log(config.DC_LineSize, 2);
-            DC_WriteThroughCheckBox.Checked = config.DC_Writethrough_NoAllocate;
-
-            L2CacheCheckBox.Checked = config.L2Cache_Exists;
-            L2_NumOfSetsBox.SelectedIndex = config.L2_NumOfSets == 1 ? 0 : (int)Math.Log(config.L2_NumOfSets, 2);
-            L2_SetSizeBox.SelectedIndex = config.L2_SetSize == 1 ? 0 : (int)Math.Log(config.L2_SetSize, 2);
-            L2_LineSizeBox.SelectedIndex = config.L2_LineSize == 1 ? 0 : (int)Math.Log(config.L2_LineSize, 2);
-            L2_WriteThroughCheckBox.Checked = config.L2_Writethrough_NoAllocate;
-
-            TLB_Checkbox.Checked = config.TLB_Exists;
-            TLB_NumOfSetsBox.SelectedIndex = config.TLB_NumOfSets == 1 ? 0 : (int)Math.Log(config.TLB_NumOfSets, 2);
-            TLB_SetSizeBox.SelectedIndex = config.TLB_SetSize == 1 ? 0 : (int)Math.Log(config.TLB_SetSize, 2);
-
-            VirtAddressingCheckBox.Checked = config.VirtAddressing;
         }
 
         public void updateConfig()

@@ -47,7 +47,7 @@ namespace MemSim
             //int that will hold the addresses int
 
             int virtAddress;
-            int physAddress = 0;
+            int physAddress;
             int physicalPageNum = 0;
             string TLBresult = "MISS", PTresult, DCresult = "MISS", L2result = "MISS";
             addressLines = inputString.Split('\n');
@@ -85,10 +85,9 @@ namespace MemSim
                 IsolateVPNAndOffset(address[1]);
 
 
-
                 //TLB checks to see if the physical address exists
                 //if statement here to see if tlb is disabled or not
-                if(config.TLB_Exists)
+                if (config.TLB_Exists)
                 {
                     Dtlb = tlb.updateTLB(VIRTpageNumber);
 

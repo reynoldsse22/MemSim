@@ -20,3 +20,14 @@ C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Debug\MemSim.csproj.Ge
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Debug\MemSim.csproj.CoreCompileInputs.cache
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Debug\MemSim.exe
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Debug\MemSim.pdb
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\bin\Debug\MemSim.exe.config
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\bin\Debug\MemSim.exe
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\bin\Debug\MemSim.pdb
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.csproj.AssemblyReference.cache
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.csproj.SuggestedBindingRedirects.cache
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.MemSimForm.resources
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.Properties.Resources.resources
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.csproj.GenerateResource.cache
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.csproj.CoreCompileInputs.cache
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.exe
+C:\Users\janin\Documents\GitHub\MemSim\MemSim\MemSim\obj\Debug\MemSim.pdb

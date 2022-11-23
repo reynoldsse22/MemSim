@@ -22,7 +22,7 @@ namespace MemSim
         {
             config = configurations;
             PT = new PageTableEntry[config.PT_NumOfVP];
-            FT = new FrameTable(config.PT_NumOfVP);
+            FT = new FrameTable(config.PT_NumOfPhyP);
 
             for (int i = 0; i < PT.Length; i++)  // create all pages, setting each to invalid
             {

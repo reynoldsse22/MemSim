@@ -138,6 +138,8 @@ namespace MemSim
                 L2_LineSizeBox.Enabled = true;
                 L2_WriteThroughCheckBox.Enabled = true;
             }
+
+            config.updateConfiguration();
         }
 
         public void updateConfig()

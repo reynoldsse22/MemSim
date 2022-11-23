@@ -30,7 +30,6 @@ namespace MemSim
             //Will hold the addresses from the inputted files
             string[] addressLines;
             string[] address;
-            string pageOffsetHex = "";
             DataCache dc = new DataCache("L1", config);
             DataCache l2 = new DataCache("L2", config);
             DTLB tlb = new DTLB(config); 
@@ -38,16 +37,8 @@ namespace MemSim
             CacheHit dCache = new CacheHit();
             CacheHit l2Cache = new CacheHit();
             TlbHit Dtlb = new TlbHit();
-            int[] test = new int[] { 12, 8, 1, 12, 4, 1, 1, 12, 0 };
+            int finalAddress;
 
-
-            //IsolateOffset("EFA");
-
-
-            //int that will hold the addresses int
-
-            int virtAddress;
-            int physAddress;
             int physicalPageNum = 0;
             string TLBresult = "MISS", PTresult, DCresult = "MISS", L2result = "MISS";
             addressLines = inputString.Split('\n');
@@ -56,17 +47,18 @@ namespace MemSim
             address = addressLines[0].Split(':');       // calculate the bits in a memory reference
             MemRefLength = address[1].Length * 4;
 
-            memOutput += "Virtual  Virt.  Page ";
+            if (config.VirtAddressing) { memOutput += "Virtual  Virt.  Page "; } else { memOutput += "Physical Phys.  Page "; }
             if (config.TLB_Exists) { memOutput += "TLB    TLB TLB  "; }
-            memOutput += "PT   Phys        DC  DC  ";
+            if (config.VirtAddressing) { memOutput += "PT   Phys        DC  DC  "; } else { memOutput += "       DC  DC  "; }
             if (config.L2Cache_Exists) { memOutput += "        L2  L2\n"; } else { memOutput += "\n"; }
             memOutput += "Address  Page # Off ";
             if (config.TLB_Exists) { memOutput += " Tag    Ind Res."; }
-            memOutput += " Res. Pg # DC Tag Ind Res.";
+            if (config.VirtAddressing) { memOutput += " Res. Pg #"; }
+            memOutput += " DC Tag Ind Res.";
             if (config.L2Cache_Exists) { memOutput += " L2 Tag Ind Res.\n"; } else { memOutput += "\n"; }
             memOutput += "-------- ------ ----";
             if (config.TLB_Exists) { memOutput += " ------ --- ----"; }
-            memOutput += " ---- ---- ------ --- ----";
+            if (config.VirtAddressing) { memOutput += " ---- ---- ------ --- ----"; } else { memOutput += " ------ --- ----"; }
             if (config.L2Cache_Exists) { memOutput += " ------ --- ----\n"; } else { memOutput += "\n"; }
 
             //runs through each address and sends it through TLB, Page Table, and Cache
@@ -80,67 +72,71 @@ namespace MemSim
                 PTresult = "";
 
                 //address[0] is the read or write char
-
                 address[1] = CheckMemoryReference(address[1]);      // removes, adds, or leaves the same
                 IsolateVPNAndOffset(address[1]);
 
-
-                //TLB checks to see if the physical address exists
-                //if statement here to see if tlb is disabled or not
-                if (config.TLB_Exists)
+                if (config.VirtAddressing)
                 {
-                    Dtlb = tlb.updateTLB(VIRTpageNumber);
-
-                    switch (Dtlb)
+                    //TLB checks to see if the physical address exists
+                    //if statement here to see if tlb is disabled or not
+                    if (config.TLB_Exists)
                     {
-                        case TlbHit.HIT:
-                            TLBhit++;
-                            physicalPageNum = tlb.returnPPN();
-                            //TLB HIT, Skip PageTable
-                            goto Skip;
+                        Dtlb = tlb.updateTLB(VIRTpageNumber);
 
-                        case TlbHit.CONF:
-                            TLBmiss++;
-                            //TLB MISS, Access PageTable
-                            break;
+                        switch (Dtlb)
+                        {
+                            case TlbHit.HIT:
+                                TLBhit++;
+                                physicalPageNum = tlb.returnPPN();
+                                //TLB HIT, Skip PageTable
+                                goto Skip;
 
-                        case TlbHit.MISS:
-                            TLBmiss++;
-                            //TLB MISS, Access PageTable
-                            break;
+                            case TlbHit.CONF:
+                                TLBmiss++;
+                                //TLB MISS, Access PageTable
+                                break;
+
+                            case TlbHit.MISS:
+                                TLBmiss++;
+                                //TLB MISS, Access PageTable
+                                break;
+                        }
+                    }
+
+                    //PageTable finds the physical address for the virtual address
+
+                    //PT HIT, return the physical page number
+                    PTrefs++;
+                    if (pt.PFNPresentAndValid(VIRTpageNumber))
+                    {
+                        PThit++;
+                        PTresult = "HIT";
+                        physicalPageNum = pt.GetPFN(VIRTpageNumber);
+                    }
+                    else     //PT MISS, Update the PT, return physical page number
+                    {
+                        PTmiss++;
+                        PTresult = "MISS";
+                        physicalPageNum = pt.GetPFN(VIRTpageNumber);
+                    }
+                    if (config.TLB_Exists)
+                        tlb.updateTlbTag(physicalPageNum);
+                    Skip:
+                    // build new virt address with PFN + offset
+                    finalAddress = (physicalPageNum << IndexBits) + pageOffset;
+
+                    //TLB Update if it exists
+                    if (config.TLB_Exists)
+                    {
+                        TLBresult = Dtlb.ToString();
+                        TLBindex = tlb.index;
+                        TLBtag = tlb.tag;
                     }
                 }
-
-                //PageTable finds the physical address for the virtual address
-
-                //PT HIT, return the physical page number
-                PTrefs++;
-                if (pt.PFNPresentAndValid(VIRTpageNumber))
+                else
                 {
-                    PThit++;
-                    PTresult = "HIT";
-                    physicalPageNum = pt.GetPFN(VIRTpageNumber);
+                    finalAddress = Convert.ToInt32(address[1], 16);
                 }
-                else     //PT MISS, Update the PT, return physical page number
-                {
-                    PTmiss++;
-                    PTresult = "MISS";
-                    physicalPageNum = pt.GetPFN(VIRTpageNumber);
-                }
-                if(config.TLB_Exists)
-                    tlb.updateTlbTag(physicalPageNum);
-            Skip:
-                // build new virt address with PFN + offset
-                virtAddress = (physicalPageNum << IndexBits) + pageOffset;
-
-                //TLB Update if it exists
-                if(config.TLB_Exists)
-                {  
-                    TLBresult = Dtlb.ToString();
-                    TLBindex = tlb.index;
-                    TLBtag = tlb.tag;
-                }
-                
 
                 // REPLACED CARLOS' physAddress WITH virtAddress
                 // need to differentiate with the two based on config settings
@@ -149,7 +145,7 @@ namespace MemSim
                 if (address[0] == "R")
                 {
                     reads++;
-                    dCache = dc.updateReadCache(virtAddress);
+                    dCache = dc.updateReadCache(finalAddress);
                     switch (dCache)
                     {
                         case CacheHit.HIT:
@@ -160,13 +156,13 @@ namespace MemSim
                             DCmiss++;
                             //DC WRITE CONF Write-Back, Update L2 Cache with the address that is being overwritten
                             if (config.L2Cache_Exists)
-                                l2Cache = l2.updateReadCache(virtAddress);
+                                l2Cache = l2.updateReadCache(finalAddress);
                             break;
                         case CacheHit.MISS:
                             DCmiss++;
                             //DC READ CONF/MISS, Pass address to the L2 cache to see if it hits or misses
                             if (config.L2Cache_Exists)
-                                l2Cache = l2.updateReadCache(virtAddress);
+                                l2Cache = l2.updateReadCache(finalAddress);
                             break;
 
                     }
@@ -181,7 +177,7 @@ namespace MemSim
                 else
                 {
                     writes++;
-                    dCache = dc.updateWriteCache(virtAddress);
+                    dCache = dc.updateWriteCache(finalAddress);
                     switch (dCache)
                     {
                         case CacheHit.HIT:
@@ -195,7 +191,7 @@ namespace MemSim
                             {
                                 //DC WRITE HIT/CONF Write-Through, Update DC and L2 Cache
                                 if (config.L2Cache_Exists)
-                                    l2Cache = l2.updateWriteCache(virtAddress);
+                                    l2Cache = l2.updateWriteCache(finalAddress);
                             }
 
                             break;
@@ -213,21 +209,21 @@ namespace MemSim
                                 else
                                 {
                                     if (config.L2Cache_Exists)
-                                        l2Cache = l2.updateWriteCache(virtAddress);
+                                        l2Cache = l2.updateWriteCache(finalAddress);
                                 }
 
                             }
                             else
                             {
                                 if (config.L2Cache_Exists)
-                                    l2Cache = l2.updateWriteCache(virtAddress);
+                                    l2Cache = l2.updateWriteCache(finalAddress);
                             }
                             break;
                         case CacheHit.MISS:
                             DCmiss++;
                             //DC MISS Write-Back, Update DC and L2 Cache
                             if (config.L2Cache_Exists)
-                                l2Cache = l2.updateWriteCache(virtAddress);
+                                l2Cache = l2.updateWriteCache(finalAddress);
                             break;
 
                     }
@@ -246,7 +242,8 @@ namespace MemSim
 
                 string output = String.Format("{0,8} {1,6} {2,4} ", address[1].PadLeft(8, '0'), VIRTpageNumber.ToString("X").PadLeft(6), pageOffset.ToString("X").PadLeft(4));
                 if (config.TLB_Exists) { output += String.Format("{0,6} {1,3} {2,4} ", TLBtag, TLBindex, TLBresult); }
-                output += String.Format("{0,4} {1,4} {2,6} {3,3} {4,4} ", PTresult, physicalPageNum, DCtag.ToString("X"), DCindex,DCresult);
+                if (config.VirtAddressing) { output += String.Format("{0,4} {1,4} ", PTresult, physicalPageNum); }
+                output += String.Format("{0,6} {1,3} {2,4} ",  DCtag.ToString("X"), DCindex, DCresult);
                 if (config.L2Cache_Exists) { output += String.Format("{0,6} {1,3} {2,4}\n", L2tag, L2Index, L2result); } else { output += "\n"; }
                 memOutput += output;
             }

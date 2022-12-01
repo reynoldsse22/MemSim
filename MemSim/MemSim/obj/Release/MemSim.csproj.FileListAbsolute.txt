@@ -20,3 +20,14 @@ C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Release\MemSim.csproj.
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Release\MemSim.csproj.CoreCompileInputs.cache
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Release\MemSim.exe
 C:\Users\samre\Documents\GitHub\MHS_GUI\MemSim\MemSim\obj\Release\MemSim.pdb
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\bin\Release\MemSim.exe.config
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\bin\Release\MemSim.exe
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\bin\Release\MemSim.pdb
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.csproj.AssemblyReference.cache
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.csproj.SuggestedBindingRedirects.cache
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.MemSimForm.resources
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.Properties.Resources.resources
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.csproj.GenerateResource.cache
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.csproj.CoreCompileInputs.cache
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.exe
+C:\Users\batta\OneDrive\Desktop\O.S\memsimGui\MemSim\MemSim\MemSim\obj\Release\MemSim.pdb
